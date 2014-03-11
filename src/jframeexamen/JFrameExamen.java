@@ -77,6 +77,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
         move = false;
         moverbola = false;
         musicafondo = true;
+        salta=false;
         velocidad = 2;
         aceleracion = 1;
         direccion = 0;
@@ -91,12 +92,12 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
             if (i == 1) {
                 pared = new Barra1(getWidth(), getHeight() / 2);
                 lista.add(pared);
-                pared2 =new ParedInv(pared.getPosX(), pared.getPosY()-200-pared.getAlto());
+                pared2 =new ParedInv(pared.getPosX(), pared.getPosY()-450);
                 lista2.add(pared2);
             } else {
                 Barra1 paredaux = (Barra1) lista.get(i - 2);
                 pared = new Barra1(paredaux.getPosX() + paredaux.getAncho() + 200, getHeight() / 2);
-                pared2 =new ParedInv(pared.getPosX(), pared.getPosY()-200-pared.getAlto());
+                pared2 =new ParedInv(pared.getPosX(), pared.getPosY()-450);
                 lista.add(pared);
                 lista2.add(pared2);
             }
@@ -173,7 +174,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
                 velocidad = -10;
                 salta = false;
             }
-            for (Barra1 i : lista) {
+            for (Barra1 i : lista) { 
                 i.setPosX(i.getPosX() - 5);
                 if (i.getPosX() + i.getAncho() < 0) {
                     rnd = new Random();
@@ -183,18 +184,18 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
                     i.setPosX(getWidth()+10);
                 }
             }
-            for(int i=0;i<lista2.size();i++){
-                ParedInv pared2au= (ParedInv)lista2.get(i);
-                Barra1 paredaux= (Barra1) lista.get(i);
-                pared2au = new ParedInv(paredaux.getPosX(),pared.getPosY()-200-pared.getAlto()); 
+            for (ParedInv i : lista2) { 
+                i.setPosX(i.getPosX() - 5);
+                if (i.getPosX() + i.getAncho() < 0) {
+                    int h;
+                    h=lista2.indexOf(i);
+                    Barra1 paredaux= (Barra1)lista.get(h);
+                    i.setPosY(paredaux.getPosY()-450);
+                    i.setPosX(paredaux.getPosX());
+                }
             }
             
 
-        }
-        else{
-            velocidad = 2;
-            aceleracion = 1;
-            birdie.setPosY(getHeight() / 2);
         }
     }
 
@@ -212,8 +213,23 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
         if (birdie.getPosY() + birdie.getAlto() > getHeight()) {
             inicia = false;
             salta = false;
+            birdie.setPosY(getHeight()/2);
         }
-    }
+        
+         for (Barra1 i : lista) { 
+            if(birdie.intersecta(i)){
+            inicia= false;
+            y=getHeight()/2;
+            }
+         }
+         for(ParedInv i: lista2){
+            if(birdie.intersecta(i)){
+            inicia=false;
+            y=getHeight()/2;
+                    }
+            
+         }
+         }
 
     /**
      * Metodo <I>update</I> sobrescrito de la clase <code>Applet</code>,
@@ -296,10 +312,10 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
      * @param e es el evento generado al ocurrir lo descrito.
      */
     public void mouseClicked(MouseEvent e) {
-        if (!inicia) {
+        if(!inicia){
             inicia = true;
         }
-    }
+        }
 
     public void mouseEntered(MouseEvent e) {
 
@@ -365,7 +381,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
             g.drawImage(inicio, 0, 0, this);
         } else if (vidas > 0) {
             g.drawImage(fondo, 0, 0, this);
-            if (birdie != null && lista != null) {
+            if (birdie != null && lista != null && lista2!=null) {
                 //Se Pintan todas las pildoras del juego
 
                 g.drawImage(birdie.getImagenI(), birdie.getPosX(), birdie.getPosY(), this);//Pinta la bola

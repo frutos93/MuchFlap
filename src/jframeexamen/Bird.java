@@ -9,7 +9,7 @@ public class Bird extends Base {
 
     public Bird(int posX, int posY) {
         super(posX, posY);
-        Image malo1 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("pidg/pid8.png")).getScaledInstance(45, 45, 1);
+        Image malo1 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("pidg/pid8.png")).getScaledInstance(45, 45   , 1);
         animacion = new Animacion();
         animacion.sumaCuadro(malo1, 100);
 
