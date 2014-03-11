@@ -22,8 +22,6 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
     private Graphics dbg;	// Objeto grafico
     private int contbloques;    // Contador de bloques destruidos
     private Bird birdie;          // Objeto bola.
-    private Bloque pill;        // Objeto Bloque usado para inicializar las listas 1 y 3
-    private BloqueR pillR;      // Objeto BloqueR usado para inicializar las listas 2 y 4
     private Barra1 pared;         // Objeto barra, es el movido por el jugador.
     private ParedInv pared2;
     private boolean musicafondo;// Boolean utilizado para correr o pausar la música de fondo
@@ -49,6 +47,8 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
     private boolean salta;
     private Random rnd;
     private boolean choca;
+    private long tiempo;
+    private long tiempoActual;
 
     /**
      * Constructor vacio de la clase <code>JFrameExamen</code>.
@@ -75,6 +75,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
         lista2= new LinkedList();
         pausa = false;
         move = false;
+        tiempo=0;
         moverbola = false;
         musicafondo = true;
         choca=false;
@@ -140,7 +141,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
      *
      */
     public void run() {
-
+    tiempoActual = System.currentTimeMillis();
         while (true) {
             if (!pausa && empezar) {
                 actualiza();
@@ -163,6 +164,9 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
      * ya sea por presionar una tecla o por moverlos con el mouse.
      */
     public void actualiza() {
+        long tiempoTranscurrido = System.currentTimeMillis() - tiempoActual;
+        tiempoActual += tiempoTranscurrido;
+        birdie.actualiza(tiempoTranscurrido);
 
         if (inicia) {
             velocidad = velocidad + aceleracion;
@@ -176,7 +180,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
                 salta = false;
             }
             for (Barra1 i : lista) { 
-                i.setPosX(i.getPosX() - 5);
+                i.setPosX(i.getPosX() - 15);
                 if (i.getPosX() + i.getAncho() < 0) {
                     rnd = new Random();
                     int h;
@@ -186,7 +190,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
                 }
             }
             for (ParedInv i : lista2) { 
-                i.setPosX(i.getPosX() - 5);
+                i.setPosX(i.getPosX() - 15);
                 if (i.getPosX() + i.getAncho() < 0) {
                     int h;
                     h=lista2.indexOf(i);
@@ -215,8 +219,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
 
         if (birdie.getPosY() + birdie.getAlto() > getHeight()) {
             inicia = false;
-            salta = false;
-            birdie.setPosY(getHeight()/2);
+            choca=true;
         }
         
          for (Barra1 i : lista) { 
