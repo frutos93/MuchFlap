@@ -1,9 +1,10 @@
 package jframeexamen;
-
+import java.awt.*;
 import javax.swing.JFrame;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -180,7 +181,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
                 salta = false;
             }
             for (Barra1 i : lista) { 
-                i.setPosX(i.getPosX() - 15);
+                i.setPosX(i.getPosX() - 5);
                 if (i.getPosX() + i.getAncho() < 0) {
                     rnd = new Random();
                     int h;
@@ -190,7 +191,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
                 }
             }
             for (ParedInv i : lista2) { 
-                i.setPosX(i.getPosX() - 15);
+                i.setPosX(i.getPosX() - 5);
                 if (i.getPosX() + i.getAncho() < 0) {
                     int h;
                     h=lista2.indexOf(i);
@@ -200,11 +201,17 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
                 }
             }
             
-
+        for (Barra1 i : lista) { 
+            if(birdie.getPosX()==i.getPosX()+i.getAncho()){
+                score++;
+            }
+        }
+            
         }
         
         
     }
+   
 
     /**
      * Metodo usado para checar las colisiones del objeto link con el objeto
@@ -426,6 +433,9 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
                 g.drawString("Vidas = " + vidas, 20, 70);
                 g.drawString("Presiona I para ver instrucciones.", getWidth() - 200, 50);
                 g.drawString("Bloques destruidos: " + contbloques, 20, 90);
+                Font fr= new Font("04b_19",Font.PLAIN, 30);
+                g.setFont(fr);
+                g.drawString(""+score, getWidth()/2, 100);
                 //    if (pausa) {
                 //        g.setColor(Color.white);
                 //        g.drawString(pill.getPausado(), pill.getPosX() + pill.getAncho() / 3, pill.getPosY() + pill.getAlto() / 2);
