@@ -40,7 +40,6 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
     private boolean empezar;    // Booleano para comenzar el juego y quitar la pantalla de inicio
     private LinkedList<Barra1> lista; // Listas de bloques
     private LinkedList<ParedInv> lista2;
-
     private Image fondo;        // Imagen de fondo
     private Image inicio;       // Imagen de inicio
     private int velocidad;
@@ -49,6 +48,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
     private boolean inicia;
     private boolean salta;
     private Random rnd;
+    private boolean choca;
 
     /**
      * Constructor vacio de la clase <code>JFrameExamen</code>.
@@ -77,6 +77,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
         move = false;
         moverbola = false;
         musicafondo = true;
+        choca=false;
         salta=false;
         velocidad = 2;
         aceleracion = 1;
@@ -197,6 +198,8 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
             
 
         }
+        
+        
     }
 
     /**
@@ -219,14 +222,14 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
          for (Barra1 i : lista) { 
             if(birdie.intersecta(i)){
             inicia= false;
-            y=getHeight()/2;
+            choca=true;
             }
          }
          for(ParedInv i: lista2){
             if(birdie.intersecta(i)){
             inicia=false;
-            y=getHeight()/2;
-                    }
+            choca=true;
+            }
             
          }
          }
@@ -286,6 +289,30 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
         } else if (e.getKeyCode() == KeyEvent.VK_SPACE) { //Al presionar la barra espaciadora lanza la pelota.
             salta = true;
         } else if (e.getKeyCode() == KeyEvent.VK_R) { //Al presionar la tecla R reinicia el juego.
+            choca=false;
+            inicia=false;
+            salta=false;
+            velocidad=2;
+            aceleracion=1;
+            y=getHeight()/2;
+            birdie.setPosY(y);
+            lista.clear();
+            lista2.clear();
+        for (int i = 1; i <= 3; i++) {
+            if (i == 1) {
+                pared = new Barra1(getWidth(), getHeight() / 2);
+                lista.add(pared);
+                pared2 =new ParedInv(pared.getPosX(), pared.getPosY()-450);
+                lista2.add(pared2);
+            } else {
+                Barra1 paredaux = (Barra1) lista.get(i - 2);
+                pared = new Barra1(paredaux.getPosX() + paredaux.getAncho() + 200, getHeight() / 2);
+                pared2 =new ParedInv(pared.getPosX(), pared.getPosY()-450);
+                lista.add(pared);
+                lista2.add(pared2);
+            }
+            }
+        
         }
     }
 
@@ -312,7 +339,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
      * @param e es el evento generado al ocurrir lo descrito.
      */
     public void mouseClicked(MouseEvent e) {
-        if(!inicia){
+        if(!inicia && !choca){
             inicia = true;
         }
         }
