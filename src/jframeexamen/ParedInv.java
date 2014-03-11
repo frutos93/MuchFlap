@@ -2,13 +2,13 @@ package jframeexamen;
       import java.awt.Image;
       import java.awt.Toolkit;
 
-    public class Barra1 extends Base{
+    public class ParedInv extends Base{
 
         
         
-    public Barra1(int posX,int posY){
+    public ParedInv(int posX,int posY){
 	super(posX,posY);	
-        Image malo1 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("barra/pcenter.png"));
+        Image malo1 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("barra/pcenter2.png"));
         animacion = new Animacion();
         animacion.sumaCuadro(malo1, 100);
 	}

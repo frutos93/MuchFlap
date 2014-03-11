@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.net.URL;
 import java.util.LinkedList;
+import java.util.Random;
 
 public class JFrameExamen extends JFrame implements Runnable, KeyListener, MouseListener, MouseMotionListener {
 
@@ -23,7 +24,8 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
     private Bird birdie;          // Objeto bola.
     private Bloque pill;        // Objeto Bloque usado para inicializar las listas 1 y 3
     private BloqueR pillR;      // Objeto BloqueR usado para inicializar las listas 2 y 4
-    private Barra1 bar;         // Objeto barra, es el movido por el jugador.
+    private Barra1 pared;         // Objeto barra, es el movido por el jugador.
+    private ParedInv pared2;
     private boolean musicafondo;// Boolean utilizado para correr o pausar la música de fondo
     private int vidas;          // Contador de vidas
     private Image game_over;    // Imagen de victoria
@@ -36,10 +38,9 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
     private boolean moverbola;  // Booleano que indica si la bola se esta moviendo
     private boolean instrucciones; // Booleano indicado para saber si se estan mostrando las instrucciones
     private boolean empezar;    // Booleano para comenzar el juego y quitar la pantalla de inicio
-    private LinkedList<Bloque> lista; // Listas de bloques
-    private LinkedList<BloqueR> lista2;
-    private LinkedList<Bloque> lista3;
-    private LinkedList<BloqueR> lista4;
+    private LinkedList<Barra1> lista; // Listas de bloques
+    private LinkedList<ParedInv> lista2;
+
     private Image fondo;        // Imagen de fondo
     private Image inicio;       // Imagen de inicio
     private int velocidad;
@@ -47,6 +48,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
     private int y;
     private boolean inicia;
     private boolean salta;
+    private Random rnd;
 
     /**
      * Constructor vacio de la clase <code>JFrameExamen</code>.
@@ -70,9 +72,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
         contbloques = 0;//oli
         y = getHeight() / 2;
         lista = new LinkedList();
-        lista2 = new LinkedList();
-        lista3 = new LinkedList();
-        lista4 = new LinkedList();
+        lista2= new LinkedList();
         pausa = false;
         move = false;
         moverbola = false;
@@ -82,13 +82,26 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
         direccion = 0;
         score = 0;                    //puntaje inicial
         vidas = 3;                    //vidaas iniciales
-        bar = new Barra1(getWidth() / 2, getHeight() - 30);
-        bar.setPosX(getWidth() / 2 - bar.getAncho() / 2);
         setBackground(Color.black);
         addKeyListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
         birdie = new Bird(50, y);
+        for (int i = 1; i <= 3; i++) {
+            if (i == 1) {
+                pared = new Barra1(getWidth(), getHeight() / 2);
+                lista.add(pared);
+                pared2 =new ParedInv(pared.getPosX(), pared.getPosY()-200-pared.getAlto());
+                lista2.add(pared2);
+            } else {
+                Barra1 paredaux = (Barra1) lista.get(i - 2);
+                pared = new Barra1(paredaux.getPosX() + paredaux.getAncho() + 200, getHeight() / 2);
+                pared2 =new ParedInv(pared.getPosX(), pared.getPosY()-200-pared.getAlto());
+                lista.add(pared);
+                lista2.add(pared2);
+            }
+
+        }
 
         URL goURL = this.getClass().getResource("barra/creditos.png");
         game_over = Toolkit.getDefaultToolkit().getImage(goURL);
@@ -98,7 +111,6 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
         perder = Toolkit.getDefaultToolkit().getImage(aURL);
         URL gURL = this.getClass().getResource("pill/imagenpausa.jpg");
         pause = Toolkit.getDefaultToolkit().getImage(gURL);
-
         instrucciones = false;
         empezar = false;
         URL emp = this.getClass().getResource("barra/Login.png");
@@ -161,21 +173,28 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
                 velocidad = -10;
                 salta = false;
             }
-        }
-
-        if (move) {
-            bar.setMoviendose(true);
-            switch (direccion) {
-                case 3: {
-                    bar.setPosX(bar.getPosX() - 6);
-                    break; //se mueve hacia la izquierda
-                }
-                case 4: {
-
-                    bar.setPosX(bar.getPosX() + 6);
-                    break; //se mueve hacia la derecha
+            for (Barra1 i : lista) {
+                i.setPosX(i.getPosX() - 5);
+                if (i.getPosX() + i.getAncho() < 0) {
+                    rnd = new Random();
+                    int h;
+                    h = rnd.nextInt(getHeight() - 300) + 200;
+                    i.setPosY(h);
+                    i.setPosX(getWidth()+10);
                 }
             }
+            for(int i=0;i<lista2.size();i++){
+                ParedInv pared2au= (ParedInv)lista2.get(i);
+                Barra1 paredaux= (Barra1) lista.get(i);
+                pared2au = new ParedInv(paredaux.getPosX(),pared.getPosY()-200-pared.getAlto()); 
+            }
+            
+
+        }
+        else{
+            velocidad = 2;
+            aceleracion = 1;
+            birdie.setPosY(getHeight() / 2);
         }
     }
 
@@ -184,12 +203,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
      * armadura y además con las orillas del <code>Applet</code>.
      */
     public void checaColision() {
-        if (bar.getPosX() + bar.getAncho() > getWidth()) {
-            bar.setPosX(getWidth() - bar.getAncho());
-        }
-        if (bar.getPosX() < 0) {
-            bar.setPosX(0);
-        }
+
         if (birdie.getPosY() < 30) {
             birdie.setPosY(30);
             salta = false;
@@ -198,9 +212,6 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
         if (birdie.getPosY() + birdie.getAlto() > getHeight()) {
             inicia = false;
             salta = false;
-            velocidad=2;
-            aceleracion=1;
-            birdie.setPosY(getHeight() / 2);
         }
     }
 
@@ -273,8 +284,6 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
      * convierte en falsa.
      */
     public void keyReleased(KeyEvent e) {
-        move = false;
-        bar.setMoviendose(false);
     }
 
     /**
@@ -356,12 +365,16 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
             g.drawImage(inicio, 0, 0, this);
         } else if (vidas > 0) {
             g.drawImage(fondo, 0, 0, this);
-            if (birdie != null && bar != null) {
+            if (birdie != null && lista != null) {
                 //Se Pintan todas las pildoras del juego
 
                 g.drawImage(birdie.getImagenI(), birdie.getPosX(), birdie.getPosY(), this);//Pinta la bola
-                g.drawImage(bar.getImagenI(), bar.getPosX(), bar.getPosY(), this);  //Pinta la Barra
-
+                for (Barra1 i : lista) {
+                g.drawImage(i.getImagenI(), i.getPosX(), i.getPosY(), this);  //Pinta la Barra
+                }
+                for(ParedInv i : lista2){
+                g.drawImage(i.getImagenI(),i.getPosX(),i.getPosY(),this);
+                }
                 g.setColor(Color.black);//Despliega los puntos, las vidas y el comando de Instrucciones
                 g.drawString("Puntos = " + score, 20, 50);
                 g.drawString("Vidas = " + vidas, 20, 70);
