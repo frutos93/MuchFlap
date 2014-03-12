@@ -1,4 +1,5 @@
 package jframeexamen;
+
 import java.awt.*;
 import javax.swing.JFrame;
 import java.awt.Graphics;
@@ -40,6 +41,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
     private boolean empezar;    // Booleano para comenzar el juego y quitar la pantalla de inicio
     private LinkedList<Barra1> lista; // Listas de bloques
     private LinkedList<ParedInv> lista2;
+    private LinkedList<RandomText> listaTexto;
     private Image fondo;        // Imagen de fondo
     private Image inicio;       // Imagen de inicio
     private int velocidad;
@@ -75,16 +77,18 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
         contbloques = 0;//oli
         y = getHeight() / 2;
         lista = new LinkedList();
-        lista2= new LinkedList();
+        lista2 = new LinkedList();
+        listaTexto = new LinkedList();
         pausa = false;
         move = false;
-        tiempo=0;
+        tiempo = 0;
         moverbola = false;
         musicafondo = true;
-        choca=false;
-        salta=false;
+        choca = false;
+        salta = false;
         velocidad = 2;
-        terminado=false;
+        
+        terminado = false;
         aceleracion = 1;
         direccion = 0;
         score = 0;                    //puntaje inicial
@@ -94,16 +98,17 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
         addMouseListener(this);
         addMouseMotionListener(this);
         birdie = new Bird(50, y);
+        birdie.setMoviendose(true);
         for (int i = 1; i <= 3; i++) {
             if (i == 1) {
                 pared = new Barra1(getWidth(), getHeight() / 2);
                 lista.add(pared);
-                pared2 =new ParedInv(pared.getPosX(), pared.getPosY()-450);
+                pared2 = new ParedInv(pared.getPosX(), pared.getPosY() - 450);
                 lista2.add(pared2);
             } else {
                 Barra1 paredaux = (Barra1) lista.get(i - 2);
                 pared = new Barra1(paredaux.getPosX() + paredaux.getAncho() + 200, getHeight() / 2);
-                pared2 =new ParedInv(pared.getPosX(), pared.getPosY()-450);
+                pared2 = new ParedInv(pared.getPosX(), pared.getPosY() - 450);
                 lista.add(pared);
                 lista2.add(pared2);
             }
@@ -119,7 +124,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
         URL gURL = this.getClass().getResource("pill/imagenpausa.jpg");
         pause = Toolkit.getDefaultToolkit().getImage(gURL);
         URL jURL = this.getClass().getResource("fondo/winn.png");
-        puntaje = Toolkit.getDefaultToolkit().getImage(jURL).getScaledInstance(getWidth()/3, getHeight()/3, 1);
+        puntaje = Toolkit.getDefaultToolkit().getImage(jURL).getScaledInstance(getWidth() / 3, getHeight() / 3, 1);
         instrucciones = false;
         empezar = false;
         URL emp = this.getClass().getResource("barra/login.jpg");
@@ -147,7 +152,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
      *
      */
     public void run() {
-    tiempoActual = System.currentTimeMillis();
+        tiempoActual = System.currentTimeMillis();
         while (true) {
             if (!pausa && empezar) {
                 actualiza();
@@ -175,6 +180,13 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
         birdie.actualiza(tiempoTranscurrido);
 
         if (inicia) {
+            for (RandomText r : listaTexto) {
+                r.cont++;
+                if (r.cont > 50) {
+                    listaTexto.remove(r);
+                    break;
+                }
+            }
             velocidad = velocidad + aceleracion;
             y = y + velocidad;
             if (y < 30) {
@@ -186,49 +198,47 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
                 salta = false;
             }
             for (Barra1 i : lista) {
-                if(score<=10){
-                i.setPosX(i.getPosX() - 5);
-                }else if(score>10 && score<= 20){
+                if (score <= 10) {
+                    i.setPosX(i.getPosX() - 5);
+                } else if (score > 10 && score <= 20) {
                     i.setPosX(i.getPosX() - 8);
-                }else{
-                i.setPosX(i.getPosX() - 10);
+                } else {
+                    i.setPosX(i.getPosX() - 10);
                 }
                 if (i.getPosX() + i.getAncho() < 0) {
                     rnd = new Random();
                     int h;
-                    h = rnd.nextInt((getHeight()/2+200) - getHeight()/2) + getHeight()/2;
+                    h = rnd.nextInt((getHeight() / 2 + 200) - getHeight() / 2) + getHeight() / 2;
                     i.setPosY(h);
-                    i.setPosX(getWidth()+10);
+                    i.setPosX(getWidth() + 10);
                 }
             }
-            for (ParedInv i : lista2) { 
-                if(score<=10){
-                i.setPosX(i.getPosX() - 5);
-                }else if(score>10 && score<= 20){
+            for (ParedInv i : lista2) {
+                if (score <= 10) {
+                    i.setPosX(i.getPosX() - 5);
+                } else if (score > 10 && score <= 20) {
                     i.setPosX(i.getPosX() - 8);
-                }else{
-                i.setPosX(i.getPosX() - 10);
+                } else {
+                    i.setPosX(i.getPosX() - 10);
                 }
                 if (i.getPosX() + i.getAncho() < 0) {
                     int h;
-                    h=lista2.indexOf(i);
-                    Barra1 paredaux= (Barra1)lista.get(h);
-                    i.setPosY(paredaux.getPosY()-450);
+                    h = lista2.indexOf(i);
+                    Barra1 paredaux = (Barra1) lista.get(h);
+                    i.setPosY(paredaux.getPosY() - 450);
                     i.setPosX(paredaux.getPosX());
                 }
             }
-            
-        for (ParedInv i : lista2) { 
-            if(birdie.getPosX()==i.getPosX()){
-                score++;
+
+            for (ParedInv i : lista2) {
+                if (birdie.getPosX() == i.getPosX()) {
+                    score++;
+                }
             }
+
         }
-            
-        }
-        
-        
+
     }
-   
 
     /**
      * Metodo usado para checar las colisiones del objeto link con el objeto
@@ -243,26 +253,26 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
 
         if (birdie.getPosY() + birdie.getAlto() > getHeight()) {
             inicia = false;
-            choca=true;
-            terminado=true;
+            choca = true;
+            terminado = true;
         }
-        
-         for (Barra1 i : lista) { 
-            if(birdie.intersecta(i)){
-            inicia= false;
-            choca=true;
-            terminado=true;
+
+        for (Barra1 i : lista) {
+            if (birdie.intersecta(i)) {
+                inicia = false;
+                choca = true;
+                terminado = true;
             }
-         }
-         for(ParedInv i: lista2){
-            if(birdie.intersecta(i)){
-            inicia=false;
-            choca=true;
-            terminado=true;
+        }
+        for (ParedInv i : lista2) {
+            if (birdie.intersecta(i)) {
+                inicia = false;
+                choca = true;
+                terminado = true;
             }
-            
-         }
-         }
+
+        }
+    }
 
     /**
      * Metodo <I>update</I> sobrescrito de la clase <code>Applet</code>,
@@ -316,35 +326,36 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
 
         } else if (e.getKeyCode() == KeyEvent.VK_I) { //Al presionar la tecla I se muestran/quitan las Instrucciones
             instrucciones = !instrucciones;
-        } else if (e.getKeyCode() == KeyEvent.VK_SPACE) { //Al presionar la barra espaciadora lanza la pelota.
+        } else if (e.getKeyCode() == KeyEvent.VK_SPACE && empezar) { //Al presionar la barra espaciadora lanza la pelota.
             salta = true;
+            agregaTexto();
         } else if (e.getKeyCode() == KeyEvent.VK_R) { //Al presionar la tecla R reinicia el juego.
-            choca=false;
-            inicia=false;
-            salta=false;
-            velocidad=2;
-            terminado=false;
-            score=0;
-            aceleracion=1;
-            y=getHeight()/2;
+            choca = false;
+            inicia = false;
+            salta = false;
+            velocidad = 2;
+            terminado = false;
+            score = 0;
+            aceleracion = 1;
+            y = getHeight() / 2;
             birdie.setPosY(y);
             lista.clear();
             lista2.clear();
-        for (int i = 1; i <= 3; i++) {
-            if (i == 1) {
-                pared = new Barra1(getWidth(), getHeight() / 2);
-                lista.add(pared);
-                pared2 =new ParedInv(pared.getPosX(), pared.getPosY()-450);
-                lista2.add(pared2);
-            } else {
-                Barra1 paredaux = (Barra1) lista.get(i - 2);
-                pared = new Barra1(paredaux.getPosX() + paredaux.getAncho() + 200, getHeight() / 2);
-                pared2 =new ParedInv(pared.getPosX(), pared.getPosY()-450);
-                lista.add(pared);
-                lista2.add(pared2);
+            for (int i = 1; i <= 3; i++) {
+                if (i == 1) {
+                    pared = new Barra1(getWidth(), getHeight() / 2);
+                    lista.add(pared);
+                    pared2 = new ParedInv(pared.getPosX(), pared.getPosY() - 450);
+                    lista2.add(pared2);
+                } else {
+                    Barra1 paredaux = (Barra1) lista.get(i - 2);
+                    pared = new Barra1(paredaux.getPosX() + paredaux.getAncho() + 200, getHeight() / 2);
+                    pared2 = new ParedInv(pared.getPosX(), pared.getPosY() - 450);
+                    lista.add(pared);
+                    lista2.add(pared2);
+                }
             }
-            }
-        
+
         }
     }
 
@@ -371,14 +382,14 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
      * @param e es el evento generado al ocurrir lo descrito.
      */
     public void mouseClicked(MouseEvent e) {
-        if(!empezar){
-            empezar=true;}
-        else{
-        if(!inicia && !choca){
-            inicia = true;
+        if (!empezar) {
+            empezar = true;
+        } else {
+            if (!inicia && !choca) {
+                inicia = true;
+            }
         }
-        }
-        }
+    }
 
     public void mouseEntered(MouseEvent e) {
 
@@ -431,6 +442,87 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
     public void mouseDragged(MouseEvent e) {
     }
 
+    public void agregaTexto() {
+        RandomText r;
+        r = new RandomText();
+        int p;
+        r.posX = (int) (Math.random() * (getWidth() - 100));
+        r.posY = (int) (Math.random() * (getHeight() - 20)) + 20;
+        p = (int) (Math.random() * 11);
+        switch (p) {
+            case 0:
+                r.col = Color.BLUE;
+                break;
+            case 1:
+                r.col = Color.CYAN;
+                break;
+            case 2:
+                r.col = Color.GRAY;
+                break;
+            case 3:
+                r.col = Color.GREEN;
+                break;
+            case 4:
+                r.col = Color.MAGENTA;
+                break;
+            case 5:
+                r.col = Color.ORANGE;
+                break;
+            case 6:
+                r.col = Color.PINK;
+                break;
+            case 7:
+                r.col = Color.RED;
+                break;
+            case 8:
+                r.col = Color.WHITE;
+                break;
+            case 9:
+                r.col = Color.YELLOW;
+                break;
+            default:
+                r.col = Color.black;
+                break;
+        }
+        p = (int) (Math.random() * 10) + 1;
+        switch (p) {
+            case 0:
+                r.texto = "Very wow";
+                break;
+            case 1:
+                r.texto = "many color";
+                break;
+            case 2:
+                r.texto = "such awesome";
+                break;
+            case 3:
+                r.texto = "much score";
+                break;
+            case 4:
+                r.texto = "many mejorado";
+                break;
+            case 5:
+                r.texto = "so doge";
+                break;
+            case 6:
+                r.texto = "such art";
+                break;
+            case 7:
+                r.texto = "Very videogme";
+                break;
+            case 8:
+                r.texto = "150 pokemon";
+                break;
+            case 9:
+                r.texto = "op frutos crujientes";
+                break;
+            default:
+                r.texto = "wow";
+                break;
+        }
+        listaTexto.add(r);
+    }
+
     /**
      * Metodo <I>paint1</I> sobrescrito de la clase <code>Applet</code>,
      * heredado de la clase Container.<P>
@@ -444,28 +536,33 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
             g.drawImage(inicio, 0, 0, this);
         } else if (vidas > 0) {
             g.drawImage(fondo, 0, 0, this);
-            if (birdie != null && lista != null && lista2!=null) {
+            if (birdie != null && lista != null && lista2 != null) {
                 //Se Pintan todas las pildoras del juego
 
                 g.drawImage(birdie.getImagenI(), birdie.getPosX(), birdie.getPosY(), this);//Pinta la bola
                 for (Barra1 i : lista) {
-                g.drawImage(i.getImagenI(), i.getPosX(), i.getPosY(), this);  //Pinta la Barra
+                    g.drawImage(i.getImagenI(), i.getPosX(), i.getPosY(), this);  //Pinta la Barra
                 }
-                for(ParedInv i : lista2){
-                g.drawImage(i.getImagenI(),i.getPosX(),i.getPosY(),this);
+                for (ParedInv i : lista2) {
+                    g.drawImage(i.getImagenI(), i.getPosX(), i.getPosY(), this);
                 }
                 g.setColor(Color.black);//Despliega los puntos, las vidas y el comando de Instrucciones
                 g.drawString("Puntos = " + score, 20, 50);
                 g.drawString("Vidas = " + vidas, 20, 70);
                 g.drawString("Presiona I para ver instrucciones.", getWidth() - 200, 50);
                 g.drawString("Bloques destruidos: " + contbloques, 20, 90);
-                Font fr= new Font("04b_19",Font.PLAIN, 15);
+                Font fr = new Font("04b_19", Font.PLAIN, 15);
                 g.setFont(fr);
-                if(terminado){
-                    g.drawImage(puntaje, getWidth()/2-50, getHeight()/2-100, this);
-                    g.drawString(""+score, getWidth()/2, getHeight()/2);
-                }else{
-                g.drawString(""+score, getWidth()/2, 100);
+                for (RandomText r : listaTexto) {
+                    g.setColor(r.col);
+                    g.drawString(r.texto, r.posX, r.posY);
+                }
+                g.setColor(Color.black);
+                if (terminado) {
+                    g.drawImage(puntaje, getWidth() / 2 - 50, getHeight() / 2 - 100, this);
+                    g.drawString("" + score, getWidth() / 2, getHeight() / 2);
+                } else {
+                    g.drawString("" + score, getWidth() / 2, 100);
                 }
                 //    if (pausa) {
                 //        g.setColor(Color.white);
