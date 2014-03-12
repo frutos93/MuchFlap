@@ -87,7 +87,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
         choca = false;
         salta = false;
         velocidad = 2;
-        
+
         terminado = false;
         aceleracion = 1;
         direccion = 0;
@@ -552,12 +552,13 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
                 g.drawString("Presiona I para ver instrucciones.", getWidth() - 200, 50);
                 g.drawString("Bloques destruidos: " + contbloques, 20, 90);
                 Font fr = new Font("04b_19", Font.PLAIN, 15);
-                g.setFont(fr);
-                
+                Font fa = new Font("Arial", Font.BOLD, 16);
                 for (RandomText r : listaTexto) {
                     g.setColor(r.col);
+                    g.setFont(fa);
                     g.drawString(r.texto, r.posX, r.posY);
                 }
+                g.setFont(fr);
                 g.setColor(Color.black);
                 if (terminado) {
                     g.drawImage(puntaje, getWidth() / 2 - 50, getHeight() / 2 - 100, this);
