@@ -29,6 +29,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
     private int vidas;          // Contador de vidas
     private Image game_over;    // Imagen de victoria
     private Image perder;       // Imagen de derrota
+    private Image puntaje;
     private Image pause;        // Imagen usada para la pausa
     private int direccion;      // Variable para la dirección del personaje
     private int score;          // Variable de puntuacion
@@ -49,6 +50,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
     private Random rnd;
     private boolean choca;
     private long tiempo;
+    private boolean terminado;
     private long tiempoActual;
 
     /**
@@ -82,9 +84,10 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
         choca=false;
         salta=false;
         velocidad = 2;
+        terminado=false;
         aceleracion = 1;
         direccion = 0;
-        score = 15;                    //puntaje inicial
+        score = 0;                    //puntaje inicial
         vidas = 3;                    //vidaas iniciales
         setBackground(Color.black);
         addKeyListener(this);
@@ -115,6 +118,8 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
         perder = Toolkit.getDefaultToolkit().getImage(aURL);
         URL gURL = this.getClass().getResource("pill/imagenpausa.jpg");
         pause = Toolkit.getDefaultToolkit().getImage(gURL);
+        URL jURL = this.getClass().getResource("fondo/winn.png");
+        puntaje = Toolkit.getDefaultToolkit().getImage(jURL).getScaledInstance(getWidth()/3, getHeight()/3, 1);
         instrucciones = false;
         empezar = false;
         URL emp = this.getClass().getResource("barra/login.jpg");
@@ -213,7 +218,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
                 }
             }
             
-        for (Barra1 i : lista) { 
+        for (ParedInv i : lista2) { 
             if(birdie.getPosX()==i.getPosX()){
                 score++;
             }
@@ -239,18 +244,21 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
         if (birdie.getPosY() + birdie.getAlto() > getHeight()) {
             inicia = false;
             choca=true;
+            terminado=true;
         }
         
          for (Barra1 i : lista) { 
             if(birdie.intersecta(i)){
             inicia= false;
             choca=true;
+            terminado=true;
             }
          }
          for(ParedInv i: lista2){
             if(birdie.intersecta(i)){
             inicia=false;
             choca=true;
+            terminado=true;
             }
             
          }
@@ -315,7 +323,8 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
             inicia=false;
             salta=false;
             velocidad=2;
-            score=15;
+            terminado=false;
+            score=0;
             aceleracion=1;
             y=getHeight()/2;
             birdie.setPosY(y);
@@ -452,7 +461,12 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
                 g.drawString("Bloques destruidos: " + contbloques, 20, 90);
                 Font fr= new Font("04b_19",Font.PLAIN, 15);
                 g.setFont(fr);
+                if(terminado){
+                    g.drawImage(puntaje, getWidth()/2-50, getHeight()/2-100, this);
+                    g.drawString(""+score, getWidth()/2, getHeight()/2);
+                }else{
                 g.drawString(""+score, getWidth()/2, 100);
+                }
                 //    if (pausa) {
                 //        g.setColor(Color.white);
                 //        g.drawString(pill.getPausado(), pill.getPosX() + pill.getAncho() / 3, pill.getPosY() + pill.getAlto() / 2);
