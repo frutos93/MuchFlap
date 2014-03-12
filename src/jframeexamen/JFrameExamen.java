@@ -84,7 +84,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
         velocidad = 2;
         aceleracion = 1;
         direccion = 0;
-        score = 0;                    //puntaje inicial
+        score = 15;                    //puntaje inicial
         vidas = 3;                    //vidaas iniciales
         setBackground(Color.black);
         addKeyListener(this);
@@ -109,7 +109,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
 
         URL goURL = this.getClass().getResource("barra/creditos.png");
         game_over = Toolkit.getDefaultToolkit().getImage(goURL);
-        URL fURL = this.getClass().getResource("Fondo/FondoDos.jpg");
+        URL fURL = this.getClass().getResource("Fondo/fondo.jpg");
         fondo = Toolkit.getDefaultToolkit().getImage(fURL).getScaledInstance(getWidth(), getHeight(), 1);
         URL aURL = this.getClass().getResource("pill/gameover.jpg");
         perder = Toolkit.getDefaultToolkit().getImage(aURL);
@@ -117,7 +117,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
         pause = Toolkit.getDefaultToolkit().getImage(gURL);
         instrucciones = false;
         empezar = false;
-        URL emp = this.getClass().getResource("barra/Login.png");
+        URL emp = this.getClass().getResource("barra/login.jpg");
         inicio = Toolkit.getDefaultToolkit().getImage(emp);
 
     }
@@ -180,18 +180,30 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
                 velocidad = -10;
                 salta = false;
             }
-            for (Barra1 i : lista) { 
+            for (Barra1 i : lista) {
+                if(score<=10){
                 i.setPosX(i.getPosX() - 5);
+                }else if(score>10 && score<= 20){
+                    i.setPosX(i.getPosX() - 8);
+                }else{
+                i.setPosX(i.getPosX() - 10);
+                }
                 if (i.getPosX() + i.getAncho() < 0) {
                     rnd = new Random();
                     int h;
-                    h = rnd.nextInt(getHeight() - 300) + 200;
+                    h = rnd.nextInt((getHeight()/2+200) - getHeight()/2) + getHeight()/2;
                     i.setPosY(h);
                     i.setPosX(getWidth()+10);
                 }
             }
             for (ParedInv i : lista2) { 
+                if(score<=10){
                 i.setPosX(i.getPosX() - 5);
+                }else if(score>10 && score<= 20){
+                    i.setPosX(i.getPosX() - 8);
+                }else{
+                i.setPosX(i.getPosX() - 10);
+                }
                 if (i.getPosX() + i.getAncho() < 0) {
                     int h;
                     h=lista2.indexOf(i);
@@ -202,7 +214,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
             }
             
         for (Barra1 i : lista) { 
-            if(birdie.getPosX()==i.getPosX()+i.getAncho()){
+            if(birdie.getPosX()==i.getPosX()){
                 score++;
             }
         }
@@ -303,6 +315,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
             inicia=false;
             salta=false;
             velocidad=2;
+            score=15;
             aceleracion=1;
             y=getHeight()/2;
             birdie.setPosY(y);
@@ -349,8 +362,12 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
      * @param e es el evento generado al ocurrir lo descrito.
      */
     public void mouseClicked(MouseEvent e) {
+        if(!empezar){
+            empezar=true;}
+        else{
         if(!inicia && !choca){
             inicia = true;
+        }
         }
         }
 
@@ -433,7 +450,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
                 g.drawString("Vidas = " + vidas, 20, 70);
                 g.drawString("Presiona I para ver instrucciones.", getWidth() - 200, 50);
                 g.drawString("Bloques destruidos: " + contbloques, 20, 90);
-                Font fr= new Font("04b_19",Font.PLAIN, 30);
+                Font fr= new Font("04b_19",Font.PLAIN, 15);
                 g.setFont(fr);
                 g.drawString(""+score, getWidth()/2, 100);
                 //    if (pausa) {
