@@ -1,4 +1,5 @@
 package jframeexamen;
+
 import java.awt.*;
 import javax.swing.JFrame;
 import java.awt.Graphics;
@@ -74,15 +75,15 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
         contbloques = 0;//oli
         y = getHeight() / 2;
         lista = new LinkedList();
-        lista2= new LinkedList();
+        lista2 = new LinkedList();
         listaTextos = new LinkedList();
         pausa = false;
         move = false;
-        tiempo=0;
+        tiempo = 0;
         moverbola = false;
         musicafondo = true;
-        choca=false;
-        salta=false;
+        choca = false;
+        salta = false;
         velocidad = 2;
         aceleracion = 1;
         direccion = 0;
@@ -97,12 +98,12 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
             if (i == 1) {
                 pared = new Barra1(getWidth(), getHeight() / 2);
                 lista.add(pared);
-                pared2 =new ParedInv(pared.getPosX(), pared.getPosY()-450);
+                pared2 = new ParedInv(pared.getPosX(), pared.getPosY() - 450);
                 lista2.add(pared2);
             } else {
                 Barra1 paredaux = (Barra1) lista.get(i - 2);
                 pared = new Barra1(paredaux.getPosX() + paredaux.getAncho() + 200, getHeight() / 2);
-                pared2 =new ParedInv(pared.getPosX(), pared.getPosY()-450);
+                pared2 = new ParedInv(pared.getPosX(), pared.getPosY() - 450);
                 lista.add(pared);
                 lista2.add(pared2);
             }
@@ -144,7 +145,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
      *
      */
     public void run() {
-    tiempoActual = System.currentTimeMillis();
+        tiempoActual = System.currentTimeMillis();
         while (true) {
             if (!pausa && empezar) {
                 actualiza();
@@ -171,6 +172,13 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
         tiempoActual += tiempoTranscurrido;
         birdie.actualiza(tiempoTranscurrido);
 
+        for(RandomText i:listaTextos){
+            i.cont++;
+            if(i.cont > 49){
+                listaTextos.remove(i);
+                break;
+            }
+        }
         if (inicia) {
             velocidad = velocidad + aceleracion;
             y = y + velocidad;
@@ -183,49 +191,47 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
                 salta = false;
             }
             for (Barra1 i : lista) {
-                if(score<=10){
-                i.setPosX(i.getPosX() - 5);
-                }else if(score>10 && score<= 20){
+                if (score <= 10) {
+                    i.setPosX(i.getPosX() - 5);
+                } else if (score > 10 && score <= 20) {
                     i.setPosX(i.getPosX() - 8);
-                }else{
-                i.setPosX(i.getPosX() - 10);
+                } else {
+                    i.setPosX(i.getPosX() - 10);
                 }
                 if (i.getPosX() + i.getAncho() < 0) {
                     rnd = new Random();
                     int h;
-                    h = rnd.nextInt((getHeight()/2+200) - getHeight()/2) + getHeight()/2;
+                    h = rnd.nextInt((getHeight() / 2 + 200) - getHeight() / 2) + getHeight() / 2;
                     i.setPosY(h);
-                    i.setPosX(getWidth()+10);
+                    i.setPosX(getWidth() + 10);
                 }
             }
-            for (ParedInv i : lista2) { 
-                if(score<=10){
-                i.setPosX(i.getPosX() - 5);
-                }else if(score>10 && score<= 20){
+            for (ParedInv i : lista2) {
+                if (score <= 10) {
+                    i.setPosX(i.getPosX() - 5);
+                } else if (score > 10 && score <= 20) {
                     i.setPosX(i.getPosX() - 8);
-                }else{
-                i.setPosX(i.getPosX() - 10);
+                } else {
+                    i.setPosX(i.getPosX() - 10);
                 }
                 if (i.getPosX() + i.getAncho() < 0) {
                     int h;
-                    h=lista2.indexOf(i);
-                    Barra1 paredaux= (Barra1)lista.get(h);
-                    i.setPosY(paredaux.getPosY()-450);
+                    h = lista2.indexOf(i);
+                    Barra1 paredaux = (Barra1) lista.get(h);
+                    i.setPosY(paredaux.getPosY() - 450);
                     i.setPosX(paredaux.getPosX());
                 }
             }
-            
-        for (Barra1 i : lista) { 
-            if(birdie.getPosX()==i.getPosX()){
-                score++;
+
+            for (Barra1 i : lista) {
+                if (birdie.getPosX() == i.getPosX()) {
+                    score++;
+                }
             }
+
         }
-            
-        }
-        
-        
+
     }
-   
 
     /**
      * Metodo usado para checar las colisiones del objeto link con el objeto
@@ -240,23 +246,23 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
 
         if (birdie.getPosY() + birdie.getAlto() > getHeight()) {
             inicia = false;
-            choca=true;
+            choca = true;
         }
-        
-         for (Barra1 i : lista) { 
-            if(birdie.intersecta(i)){
-            inicia= false;
-            choca=true;
+
+        for (Barra1 i : lista) {
+            if (birdie.intersecta(i)) {
+                inicia = false;
+                choca = true;
             }
-         }
-         for(ParedInv i: lista2){
-            if(birdie.intersecta(i)){
-            inicia=false;
-            choca=true;
+        }
+        for (ParedInv i : lista2) {
+            if (birdie.intersecta(i)) {
+                inicia = false;
+                choca = true;
             }
-            
-         }
-         }
+
+        }
+    }
 
     /**
      * Metodo <I>update</I> sobrescrito de la clase <code>Applet</code>,
@@ -312,32 +318,33 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
             instrucciones = !instrucciones;
         } else if (e.getKeyCode() == KeyEvent.VK_SPACE) { //Al presionar la barra espaciadora lanza la pelota.
             salta = true;
+            agregaElemento();
         } else if (e.getKeyCode() == KeyEvent.VK_R) { //Al presionar la tecla R reinicia el juego.
-            choca=false;
-            inicia=false;
-            salta=false;
-            velocidad=2;
-            score=15;
-            aceleracion=1;
-            y=getHeight()/2;
+            choca = false;
+            inicia = false;
+            salta = false;
+            velocidad = 2;
+            score = 15;
+            aceleracion = 1;
+            y = getHeight() / 2;
             birdie.setPosY(y);
             lista.clear();
             lista2.clear();
-        for (int i = 1; i <= 3; i++) {
-            if (i == 1) {
-                pared = new Barra1(getWidth(), getHeight() / 2);
-                lista.add(pared);
-                pared2 =new ParedInv(pared.getPosX(), pared.getPosY()-450);
-                lista2.add(pared2);
-            } else {
-                Barra1 paredaux = (Barra1) lista.get(i - 2);
-                pared = new Barra1(paredaux.getPosX() + paredaux.getAncho() + 200, getHeight() / 2);
-                pared2 =new ParedInv(pared.getPosX(), pared.getPosY()-450);
-                lista.add(pared);
-                lista2.add(pared2);
+            for (int i = 1; i <= 3; i++) {
+                if (i == 1) {
+                    pared = new Barra1(getWidth(), getHeight() / 2);
+                    lista.add(pared);
+                    pared2 = new ParedInv(pared.getPosX(), pared.getPosY() - 450);
+                    lista2.add(pared2);
+                } else {
+                    Barra1 paredaux = (Barra1) lista.get(i - 2);
+                    pared = new Barra1(paredaux.getPosX() + paredaux.getAncho() + 200, getHeight() / 2);
+                    pared2 = new ParedInv(pared.getPosX(), pared.getPosY() - 450);
+                    lista.add(pared);
+                    lista2.add(pared2);
+                }
             }
-            }
-        
+
         }
     }
 
@@ -364,14 +371,14 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
      * @param e es el evento generado al ocurrir lo descrito.
      */
     public void mouseClicked(MouseEvent e) {
-        if(!empezar){
-            empezar=true;}
-        else{
-        if(!inicia && !choca){
-            inicia = true;
+        if (!empezar) {
+            empezar = true;
+        } else {
+            if (!inicia && !choca) {
+                inicia = true;
+            }
         }
-        }
-        }
+    }
 
     public void mouseEntered(MouseEvent e) {
 
@@ -423,22 +430,82 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
      */
     public void mouseDragged(MouseEvent e) {
     }
-    
-    
-    
+
     /*
-    * Metodo encargado de crear los textos que se muestran en pantalla
-    */
-    public void agregaElemento(){
+     * Metodo encargado de crear los textos que se muestran en pantalla
+     */
+    public void agregaElemento() {
         RandomText r;
         r = new RandomText();
-        
+
         int p;
-        p =(int) Math.random() *100;
-        
-        
+        p = (int) Math.random() * 9;
+        switch (p) {
+            case 0:
+                r.col = Color.BLUE;
+                break;
+            case 1:
+                r.col = Color.CYAN;
+                break;
+            case 2:
+                r.col = Color.DARK_GRAY;
+                break;
+            case 3:
+                r.col = Color.PINK;
+                break;
+            case 4:
+                r.col = Color.GREEN;
+                break;
+            case 5:
+                r.col = Color.MAGENTA;
+                break;
+            case 6:
+                r.col = Color.YELLOW;
+                break;
+            case 7:
+                r.col = Color.WHITE;
+                break;
+            case 8:
+                r.col = Color.ORANGE;
+                break;
+            default:
+                r.col = Color.black;
+                break;
+        }
+
+        p = (int) Math.random() * 10;
+        switch (p) {
+            case 0:
+                r.texto = "such wow";
+                break;
+            case 1:
+                r.texto = "very videogame";
+                break;
+            case 2:
+                r.texto = "many 100";
+                break;
+            case 3:
+                r.texto = "how win";
+                break;
+            case 4:
+                r.texto = "many calification";
+                break;
+            case 5:
+                r.texto = "flappy many";
+                break;
+            case 6:
+                r.texto = "documentation very";
+                break;
+            default:
+                r.texto = "awesome wow";
+                break;
+        }
+        r.posX = (int) Math.random()* (getWidth() - 100);
+        r.posY = (int) Math.random() * (getHeight()- 20) + 20;
+
         listaTextos.add(r);
     }
+
     /**
      * Metodo <I>paint1</I> sobrescrito de la clase <code>Applet</code>,
      * heredado de la clase Container.<P>
@@ -452,24 +519,29 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
             g.drawImage(inicio, 0, 0, this);
         } else if (vidas > 0) {
             g.drawImage(fondo, 0, 0, this);
-            if (birdie != null && lista != null && lista2!=null) {
+            if (birdie != null && lista != null && lista2 != null) {
                 //Se Pintan todas las pildoras del juego
 
                 g.drawImage(birdie.getImagenI(), birdie.getPosX(), birdie.getPosY(), this);//Pinta la bola
                 for (Barra1 i : lista) {
-                g.drawImage(i.getImagenI(), i.getPosX(), i.getPosY(), this);  //Pinta la Barra
+                    g.drawImage(i.getImagenI(), i.getPosX(), i.getPosY(), this);  //Pinta la Barra
                 }
-                for(ParedInv i : lista2){
-                g.drawImage(i.getImagenI(),i.getPosX(),i.getPosY(),this);
+                for (ParedInv i : lista2) {
+                    g.drawImage(i.getImagenI(), i.getPosX(), i.getPosY(), this);
                 }
+                
                 g.setColor(Color.black);//Despliega los puntos, las vidas y el comando de Instrucciones
                 g.drawString("Puntos = " + score, 20, 50);
                 g.drawString("Vidas = " + vidas, 20, 70);
                 g.drawString("Presiona I para ver instrucciones.", getWidth() - 200, 50);
                 g.drawString("Bloques destruidos: " + contbloques, 20, 90);
-                Font fr= new Font("04b_19",Font.PLAIN, 15);
+                Font fr = new Font("04b_19", Font.PLAIN, 15);
                 g.setFont(fr);
-                g.drawString(""+score, getWidth()/2, 100);
+                g.drawString("" + score, getWidth() / 2, 100);
+                for(RandomText i: listaTextos){
+                    g.setColor(i.col);
+                    g.drawString(i.texto, i.posX, i.posY);
+                }
                 //    if (pausa) {
                 //        g.setColor(Color.white);
                 //        g.drawString(pill.getPausado(), pill.getPosX() + pill.getAncho() / 3, pill.getPosY() + pill.getAlto() / 2);
