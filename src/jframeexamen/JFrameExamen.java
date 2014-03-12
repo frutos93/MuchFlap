@@ -39,6 +39,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
     private boolean empezar;    // Booleano para comenzar el juego y quitar la pantalla de inicio
     private LinkedList<Barra1> lista; // Listas de bloques
     private LinkedList<ParedInv> lista2;
+    private LinkedList<RandomText> listaTextos;
     private Image fondo;        // Imagen de fondo
     private Image inicio;       // Imagen de inicio
     private int velocidad;
@@ -74,6 +75,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
         y = getHeight() / 2;
         lista = new LinkedList();
         lista2= new LinkedList();
+        listaTextos = new LinkedList();
         pausa = false;
         move = false;
         tiempo=0;
@@ -404,7 +406,22 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
      */
     public void mouseDragged(MouseEvent e) {
     }
-
+    
+    
+    
+    /*
+    * Metodo encargado de crear los textos que se muestran en pantalla
+    */
+    public void agregaElemento(){
+        RandomText r;
+        r = new RandomText();
+        
+        int p;
+        p =(int) Math.random() *100;
+        
+        
+        listaTextos.add(r);
+    }
     /**
      * Metodo <I>paint1</I> sobrescrito de la clase <code>Applet</code>,
      * heredado de la clase Container.<P>
@@ -433,7 +450,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
                 g.drawString("Vidas = " + vidas, 20, 70);
                 g.drawString("Presiona I para ver instrucciones.", getWidth() - 200, 50);
                 g.drawString("Bloques destruidos: " + contbloques, 20, 90);
-                Font fr= new Font("04b_19",Font.PLAIN, 30);
+                Font fr= new Font("04b_19",Font.PLAIN, 15);
                 g.setFont(fr);
                 g.drawString(""+score, getWidth()/2, 100);
                 //    if (pausa) {
