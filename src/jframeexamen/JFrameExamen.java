@@ -553,6 +553,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener, Mouse
                 g.drawString("Bloques destruidos: " + contbloques, 20, 90);
                 Font fr = new Font("04b_19", Font.PLAIN, 15);
                 g.setFont(fr);
+                
                 for (RandomText r : listaTexto) {
                     g.setColor(r.col);
                     g.drawString(r.texto, r.posX, r.posY);
